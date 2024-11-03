@@ -10,7 +10,7 @@ class NovaFrame extends HTMLElement {
       // 要素Nodeかどうかを判定
       const childElements = Array.from(this.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
       // console.log(childElements)
-      childElements.forEach((element) => {
+      childElements.forEach(element => {
         if (element.tagName.toLowerCase() === "a") {
           console.log(element)
           this.url.push({ url: element.href, element })
@@ -22,7 +22,7 @@ class NovaFrame extends HTMLElement {
   }
 
   async aTagFetch() {
-    this.url.forEach((obj) => {
+    this.url.forEach(obj => {
       console.log(obj)
       obj.element.addEventListener("click", async (e) => {
         e.preventDefault()
@@ -30,17 +30,15 @@ class NovaFrame extends HTMLElement {
         try {
           const response = await fetch(obj.url)
           const result = await response.text()
-          // console.log(result)
-          // console.log(this.id)
-
           // nova-frameのidタグで囲まれているものだけを取得
           const parser = new DOMParser()
           const doc = parser.parseFromString(result, "text/html") //htmlとしてパース
           //　パースとは、文字列を解析して、それをプログラムが理解できるデータ構造に変換すること
           const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
-          // console.log(NovaFrame)
           if (NovaFrame) {
             this.innerHTML = NovaFrame.innerHTML
+          } else {
+            console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
         } catch (e) {
           console.log(e)
