@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <nova-frame id="aqa">
-   <a href="/x.html">aタグだよ</a>
-  </nova-frame>
-  <script type="module" src="index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <nova-frame id="aqa">
+      <a href="/x.html">aタグだよ</a>
+    </nova-frame>
+
+    <form action="/a" data-nova-frame-id="aqa" method="post">
+      <input type="text" name="test"/>
+      <button type="submit">wdwd</button>
+    </form>
+    <script type="module" src="index.js"></script>
+  </body>
 </html>
