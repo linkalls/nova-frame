@@ -7,7 +7,7 @@ class NovaFrame extends HTMLElement {
     this.shadowRoot.innerHTML = `
     ${this.innerHTML}
   `
-  this.innerHTML = ""
+    this.innerHTML = ""
   }
   connectedCallback() {
     // domが読み込まれたときに呼ばれる
@@ -17,9 +17,9 @@ class NovaFrame extends HTMLElement {
       // console.log(childElements)
       childElements.forEach((element) => {
         if (element.tagName.toLowerCase() === "a") {
-          console.log(element)
+          // console.log(element)
           this.url.push({ url: element.href, element })
-          console.log(this.url)
+          // console.log(this.url)
           this.aTagFetch()
         }
       })
@@ -28,10 +28,10 @@ class NovaFrame extends HTMLElement {
 
   async aTagFetch() {
     this.url.forEach((obj) => {
-      console.log(obj)
+      // console.log(obj)
       obj.element.addEventListener("click", async (e) => {
         e.preventDefault()
-        console.log(obj.url)
+        // console.log(obj.url)
         try {
           const response = await fetch(obj.url)
           const result = await response.text()
@@ -42,6 +42,17 @@ class NovaFrame extends HTMLElement {
           const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
           if (NovaFrame) {
             this.shadowRoot.innerHTML = NovaFrame.innerHTML
+            const usedUrl = this.url.find((url) => url.url === obj.url)
+            if (usedUrl) {
+              const index = this.url.indexOf(usedUrl) //indexを取得
+              if (index > -1) {
+                //indexが-1より大きい場合(有効である場合)
+                this.url.splice(index, 1) //index番号がindexで配列から1つ削除
+              }
+            }
+            this.connectedCallback() // ここでもっかいevent listenerを設定している
+            // 新しい内容に対してもイベントリスナーを再度設定
+            // 新しいコンテンツが shadowRoot に設定されると、以前に設定されていたイベントリスナーはすべて削除されます。これは、DOM 要素が置き換えられるためです。
           } else {
             console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
