@@ -5,28 +5,17 @@ class NovaFrame extends HTMLElement {
     this.id = this.getAttribute("id")
   }
   connectedCallback() {
-    // domが読み込まれたときに呼ばれる
-    if (this.childNodes) {
-      // 要素Nodeかどうかを判定
-      const childElements = Array.from(this.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
-      // console.log(childElements)
-      childElements.forEach((element) => {
-        if (element.tagName.toLowerCase() === "a") {
-          // console.log(element)
-          this.url.push({ url: element.href, element })
-          // console.log(this.url)
-          this.aTagFetch()
-        }
-      })
-    }
+    const childElements = this.querySelectorAll("a")
+    childElements.forEach((element) => {
+      this.url.push({ url: element.href, element })
+      this.aTagFetch()
+    })
   }
 
   async aTagFetch() {
     this.url.forEach((obj) => {
-      // console.log(obj)
       obj.element.addEventListener("click", async (e) => {
         e.preventDefault()
-        // console.log(obj.url)
         try {
           document.dispatchEvent(loadingEvent)
           const response = await fetch(obj.url)
@@ -49,9 +38,9 @@ class NovaFrame extends HTMLElement {
             this.connectedCallback() // ここでもっかいevent listenerを設定している
             // 新しい内容に対してもイベントリスナーを再度設定
             // 新しいコンテンツが shadowRoot に設定されると、以前に設定されていたイベントリスナーはすべて削除されます。これは、DOM 要素が置き換えられるためです。
-            
+            history.pushState({ frame_id: this.id, url: obj.url }, null, obj.url)
+            console.log(history)
             document.dispatchEvent(loadEvent) //独自イベントを発火
-
           } else {
             console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
@@ -64,7 +53,6 @@ class NovaFrame extends HTMLElement {
 }
 
 customElements.define("nova-frame", NovaFrame)
-
 
 // ここから独自イベントの発火設定
 
