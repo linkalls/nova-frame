@@ -3,8 +3,8 @@ import { url } from "inspector"
 const app = express()
 import path from "path"
 import { fileURLToPath } from "url"
-import pkg from 'body-parser';
-const { urlencoded } = pkg;
+import pkg from "body-parser"
+const { urlencoded } = pkg
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -16,9 +16,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"))
 })
 
-app.post("/a",(req,res)=>{
+app.post("/a", (req, res) => {
   console.log(req.body)
-  res.send(`<nova-frame id="aqa">Hello, ${req.body.test}</nova-frame>`)
+  res.send(`<nova-frame id="aqa"><p style="color: red;">Hello, ${req.body.test}</p></nova-frame>`)
 })
 
 app.listen(3000, () => {

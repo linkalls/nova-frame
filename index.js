@@ -3,12 +3,17 @@ class NovaFrame extends HTMLElement {
     super()
     this.url = []
     this.id = this.getAttribute("id")
+    this.attachShadow({ mode: "open" })
+    this.shadowRoot.innerHTML = `
+    ${this.innerHTML}
+  `
+  this.innerHTML = ""
   }
   connectedCallback() {
     // domが読み込まれたときに呼ばれる
-    if (this.childNodes) {
+    if (this.shadowRoot.childNodes) {
       // 要素Nodeかどうかを判定
-      const childElements = Array.from(this.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
+      const childElements = Array.from(this.shadowRoot.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
       // console.log(childElements)
       childElements.forEach((element) => {
         if (element.tagName.toLowerCase() === "a") {
@@ -36,7 +41,7 @@ class NovaFrame extends HTMLElement {
           //　パースとは、文字列を解析して、それをプログラムが理解できるデータ構造に変換すること
           const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
           if (NovaFrame) {
-            this.innerHTML = NovaFrame.innerHTML
+            this.shadowRoot.innerHTML = NovaFrame.innerHTML
           } else {
             console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
@@ -106,7 +111,7 @@ if (dataNovaFrameId) {
         const doc = parser.parseFromString(result, "text/html") //htmlとしてパース
         const NovaFrame = doc.querySelector(`nova-frame[id="${NovaFrameId}"]`)
         if (NovaFrame) {
-          document.querySelector(`nova-frame[id="${NovaFrameId}"]`).innerHTML = NovaFrame.innerHTML
+          document.querySelector(`nova-frame[id="${NovaFrameId}"]`).shadowRoot.innerHTML = NovaFrame.innerHTML
         } else {
           console.log(`nova-frame[id="${NovaFrameId}"]が見つかりません`)
         }

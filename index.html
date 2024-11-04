@@ -4,23 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/linkalls/raku@beta-v0.01/raku.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/linkalls/raku@beta-v0.01/raku.min.css" />
   </head>
   <body>
     <form action="/a" data-nova-frame-id="aqa" method="post">
-      <input type="text" name="test"/>
+      <input type="text" name="test" />
       <button type="submit">wdwd</button>
     </form>
-    <nova-frame id="aqa" >
-      <a href="/x.html">aタグだよ</a>
+    <nova-frame id="aqa" class="aqa">
+      <style>
+        * {
+          background-color: yellowgreen;
+        }
+      </style>
+      <a href="/x.html" class="aqa">aタグだよ</a>
       <p>ここはNovaFrameタグ内だよ!</p>
     </nova-frame>
+    <p>ここもpタグだけどshadowRootの中じゃないからcssあたるよ</p>
     <script type="module" src="index.js"></script>
   </body>
   <style>
-/* nova-frame内のすべての要素に背景色を適用 */
-#aqa * {
-  background-color: rgb(97, 58, 84);
-}
+    /* nova-frame内のすべての要素に背景色を適用 */
+    
+    p {
+      color: green;
+    }
   </style>
 </html>
