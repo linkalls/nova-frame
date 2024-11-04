@@ -91,12 +91,13 @@ if (dataNovaFrameId) {
         })
         url += `?${params.toString()}`
       } else {
+        console.log(escapedFormData.forEach((value, key) => console.log(`${key}: ${value}`)))
         options.body = new URLSearchParams(escapedFormData)
+        // console.log(options.body.forEach((value, key) => console.log(`${key}: ${value}`)))
         //formDataをURLSearchParamsに変換してから送るとうまくいく
       }
 
       try {
-        console.log(options)
         const response = await fetch(url, options)
         const result = await response.text()
 
