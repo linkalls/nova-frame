@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/linkalls/raku@beta-v0.01/raku.min.css" />
   </head>
   <body>
@@ -16,6 +16,7 @@
       <a href="/x.html" class="aqa">aタグだよ</a>
       <p class="text-end">ここはNovaFrameタグ内だよ!</p>
     </nova-frame>
+    <div></div>
     <script type="module" src="index.js"></script>
   </body>
   <style>
@@ -26,6 +27,35 @@
       border: 1px red solid;
       display: block;
     }
-
   </style>
+  <script type="module">
+    import Nova from "https://cdn.jsdelivr.net/gh/linkalls/nova-js/src/NovaDOM.js";
+  
+    document.addEventListener("nova-frame:load", (e) => {
+      const loadingP = Nova.select("#loading");
+      if (loadingP) {
+        loadingP.remove();
+      }
+      const nova = new Nova("p");
+      nova.innerText("load後です");
+      const div = Nova.select("div");
+      if (div) {
+        div.in(nova);
+      }
+    });
+  
+    document.addEventListener("nova-frame:loading", (e) => {
+      const existingLoading = Nova.selectALL("p.loading");
+      if (existingLoading) {
+        existingLoading.remove();
+      }
+      const nova = new Nova("p");
+      nova.addClass("loading");
+      nova.innerText("load中です");
+      const div = Nova.select("div");
+      if (div) {
+        div.in(nova);
+      }
+    });
+  </script>
 </html>

@@ -1,20 +1,20 @@
 class NovaFrame extends HTMLElement {
   constructor() {
     super()
-    this.url = []
+    this.urls = []
     this.id = this.getAttribute("id")
   }
 
   connectedCallback() {
     const childElements = this.querySelectorAll("a")
     childElements.forEach((element) => {
-      this.url.push({ url: element.href, element })
+      this.urls.push({ url: element.href, element })
       this.aTagFetch()
     })
   }
 
   async aTagFetch() {
-    this.url.forEach((obj) => {
+    this.urls.forEach((obj) => {
       obj.element.addEventListener("click", async (e) => {
         e.preventDefault()
         try {
@@ -29,14 +29,14 @@ class NovaFrame extends HTMLElement {
           const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
           if (NovaFrame) {
             this.innerHTML = NovaFrame.innerHTML
-            this.url = this.url.filter((url) => url.url !== obj.url)
+            this.url = this.urls.filter((url) => url.url !== obj.url) // 重複を削除
             this.connectedCallback()
 
             // URLをpushStateで履歴に追加
             history.pushState({ frame_id: this.id }, null, obj.url)
 
             // popstate イベントの設定
-            window.addEventListener("popstate", () => {
+            window.addEventListener("popstate", async () => {
               console.log("戻るボタンが押されました")
               if (window.old_content) {
                 // 保存した内容を復元
@@ -48,6 +48,12 @@ class NovaFrame extends HTMLElement {
                 }
               } else {
                 console.log("前のコンテンツが保存されていません")
+                const response = await fetch(obj.url)
+                const result = await response.text()
+                const parser = new DOMParser()
+                const doc = parser.parseFromString(result, "text/html")
+                const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
+                this.innerHTML = NovaFrame.innerHTML
               }
             })
 
