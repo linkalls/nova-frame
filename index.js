@@ -3,17 +3,12 @@ class NovaFrame extends HTMLElement {
     super()
     this.url = []
     this.id = this.getAttribute("id")
-    this.attachShadow({ mode: "open" })
-    this.shadowRoot.innerHTML = `
-    ${this.innerHTML}
-  `
-    this.innerHTML = ""
   }
   connectedCallback() {
     // domが読み込まれたときに呼ばれる
-    if (this.shadowRoot.childNodes) {
+    if (this.childNodes) {
       // 要素Nodeかどうかを判定
-      const childElements = Array.from(this.shadowRoot.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
+      const childElements = Array.from(this.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE)
       // console.log(childElements)
       childElements.forEach((element) => {
         if (element.tagName.toLowerCase() === "a") {
@@ -33,6 +28,7 @@ class NovaFrame extends HTMLElement {
         e.preventDefault()
         // console.log(obj.url)
         try {
+          document.dispatchEvent(loadingEvent)
           const response = await fetch(obj.url)
           const result = await response.text()
           // nova-frameのidタグで囲まれているものだけを取得
@@ -41,7 +37,7 @@ class NovaFrame extends HTMLElement {
           //　パースとは、文字列を解析して、それをプログラムが理解できるデータ構造に変換すること
           const NovaFrame = doc.querySelector(`nova-frame[id="${this.id}"]`)
           if (NovaFrame) {
-            this.shadowRoot.innerHTML = NovaFrame.innerHTML
+            this.innerHTML = NovaFrame.innerHTML
             const usedUrl = this.url.find((url) => url.url === obj.url)
             if (usedUrl) {
               const index = this.url.indexOf(usedUrl) //indexを取得
@@ -53,6 +49,9 @@ class NovaFrame extends HTMLElement {
             this.connectedCallback() // ここでもっかいevent listenerを設定している
             // 新しい内容に対してもイベントリスナーを再度設定
             // 新しいコンテンツが shadowRoot に設定されると、以前に設定されていたイベントリスナーはすべて削除されます。これは、DOM 要素が置き換えられるためです。
+            
+            document.dispatchEvent(loadEvent) //独自イベントを発火
+
           } else {
             console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
@@ -65,6 +64,31 @@ class NovaFrame extends HTMLElement {
 }
 
 customElements.define("nova-frame", NovaFrame)
+
+
+// ここから独自イベントの発火設定
+
+const loadEvent = new Event("nova-frame:load", {
+  isLoaded: true,
+})
+
+const loadingEvent = new Event("nova-frame:loading", {
+  isLoading: true,
+})
+
+document.addEventListener("nova-frame:loading", () => {
+  console.log("nova-frame:loading")
+  window.loading = true
+  window.loaded = false
+})
+
+document.addEventListener("nova-frame:load", () => {
+  console.log("nova-frame:load")
+  window.loading = false
+  window.loaded = true
+})
+
+// ここまで独自イベントの発火設定
 
 // formでXSS防ぐようにする
 function escapeHTML(str) {
@@ -122,7 +146,7 @@ if (dataNovaFrameId) {
         const doc = parser.parseFromString(result, "text/html") //htmlとしてパース
         const NovaFrame = doc.querySelector(`nova-frame[id="${NovaFrameId}"]`)
         if (NovaFrame) {
-          document.querySelector(`nova-frame[id="${NovaFrameId}"]`).shadowRoot.innerHTML = NovaFrame.innerHTML
+          document.querySelector(`nova-frame[id="${NovaFrameId}"]`).innerHTML = NovaFrame.innerHTML
         } else {
           console.log(`nova-frame[id="${NovaFrameId}"]が見つかりません`)
         }
@@ -132,21 +156,3 @@ if (dataNovaFrameId) {
     })
   })
 }
-
-// if (dataNovaFrameId) {
-//   dataNovaFrameId.forEach((form) => {
-//     const id = form.getAttribute("data-nova-frame-id")
-//     console.log(form)
-//     form.addEventListener("submit", (e) => {
-//       e.preventDefault()
-//       // console.log(formData.forEach((a, b) => console.log(a, b)))
-//       const formData = new FormData(form)
-//       console.log(formData)
-//       console.log(formData.forEach((value, name) => console.log(name, value)))
-//       fetch(form.action, {
-//         method: form.method,
-//         body: formData,
-//       })
-//     })
-//   })
-// }
