@@ -57,7 +57,6 @@ window.addEventListener("popstate", async (e) => {
     console.log(history.state.frame_id, history.state.old_url)
     const response = await fetch(history.state.old_url)
     const result = await response.text()
-    console.log(result)
     const parser = new DOMParser()
     const doc = parser.parseFromString(result, "text/html")
     const NovaFrame = doc.querySelector(`nova-frame[id="${history.state.frame_id}"]`)
