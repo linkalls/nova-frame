@@ -17,6 +17,17 @@
       <p class="text-end">ここはNovaFrameタグ内だよ!</p>
     </nova-frame>
     <div></div>
+
+  <section>
+    <form action="https://linkall.cloudfree.jp/nova-frame.php" data-nova-frame-id="test" method="post">
+      <input type="text" name="text" />
+      <button type="submit">wdwd</button>
+    </form>
+    <nova-frame id="test" class="aqa">
+      <a href="/x.html" class="aqa">aタグだよ</a>
+      <p class="text-end">ここはNovaFrameタグ内だよ!</p>
+    </nova-frame>
+  </section>
     <script type="module" src="index.js"></script>
   </body>
   <style>
@@ -45,7 +56,7 @@
     });
   
     document.addEventListener("nova-frame:loading", (e) => {
-      const existingLoading = Nova.selectALL("p.loading");
+      const existingLoading = Nova.select("p.loading");
       if (existingLoading) {
         existingLoading.remove();
       }
