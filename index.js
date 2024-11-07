@@ -19,6 +19,7 @@ class NovaFrame extends HTMLElement {
         e.preventDefault()
         try {
           // ここでloadingEventを発火
+          const firstTime = Date.now()
           document.dispatchEvent(loadingEvent)
           const response = await fetch(obj.url)
           const result = await response.text()
@@ -31,11 +32,13 @@ class NovaFrame extends HTMLElement {
             this.url = this.urls.filter((url) => url.url !== obj.url) // 重複を削除
 
             // URLをpushStateで履歴に追加
-            history.pushState({ frame_id: this.id, old_url: window.location.href }, null, obj.url)
-            console.log(history.state)
+            // history.pushState({ frame_id: this.id, old_url: window.location.href }, null, obj.url)
+            // console.log(history.state)
             // history.state設定した後に呼ばないとわけわからんことになっちゃう
             this.connectedCallback()
             document.dispatchEvent(loadEvent)
+            const lastTime = Date.now()
+            console.log(`処理時間: ${lastTime - firstTime}ms`)
           } else {
             console.log(`nova-frame[id="${this.id}"]が見つかりません`)
           }
@@ -50,27 +53,27 @@ class NovaFrame extends HTMLElement {
 // カスタム要素を定義
 customElements.define("nova-frame", NovaFrame)
 
-// popstate イベントの設定
-window.addEventListener("popstate", async (e) => {
-  console.log("戻るボタンが押されました")
-  if (history.state && history.state.frame_id && history.state.old_url) {
-    console.log(history.state.frame_id, history.state.old_url)
-    const response = await fetch(history.state.old_url)
-    const result = await response.text()
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(result, "text/html")
-    const NovaFrame = doc.querySelector(`nova-frame[id="${history.state.frame_id}"]`)
-    if (NovaFrame) {
-      const frame = document.querySelector(`nova-frame[id="${history.state.frame_id}"]`)
-      frame.innerHTML = NovaFrame.innerHTML
-      frame.urls = [] // リンク情報をリセット
-      // console.log(this)　thisはundefined
-      frame.connectedCallback() // イベントリスナーを再設定
-    } else {
-      console.log(`nova-frame[id="${history.state.frame_id}"]が見つかりません`)
-    }
-  }
-})
+// // popstate イベントの設定
+// window.addEventListener("popstate", async (e) => {
+//   console.log("戻るボタンが押されました")
+//   if (history.state && history.state.frame_id && history.state.old_url) {
+//     console.log(history.state.frame_id, history.state.old_url)
+//     const response = await fetch(history.state.old_url)
+//     const result = await response.text()
+//     const parser = new DOMParser()
+//     const doc = parser.parseFromString(result, "text/html")
+//     const NovaFrame = doc.querySelector(`nova-frame[id="${history.state.frame_id}"]`)
+//     if (NovaFrame) {
+//       const frame = document.querySelector(`nova-frame[id="${history.state.frame_id}"]`)
+//       frame.innerHTML = NovaFrame.innerHTML
+//       frame.urls = [] // リンク情報をリセット
+//       // console.log(this)　thisはundefined
+//       frame.connectedCallback() // イベントリスナーを再設定
+//     } else {
+//       console.log(`nova-frame[id="${history.state.frame_id}"]が見つかりません`)
+//     }
+//   }
+// })
 
 // 独自イベント設定
 const loadEvent = new Event("nova-frame:load", { isLoaded: true })
@@ -108,6 +111,7 @@ if (dataNovaFrameId) {
   dataNovaFrameId.forEach((form) => {
     const NovaFrameId = form.getAttribute("data-nova-frame-id")
     form.addEventListener("submit", async (e) => {
+      const firstTime = Date.now()
       e.preventDefault()
       const formData = new FormData(form)
       const escapedFormData = new FormData()
@@ -139,6 +143,8 @@ if (dataNovaFrameId) {
         const NovaFrame = doc.querySelector(`nova-frame[id="${NovaFrameId}"]`)
         if (NovaFrame) {
           document.querySelector(`nova-frame[id="${NovaFrameId}"]`).innerHTML = NovaFrame.innerHTML
+          const lastTime = Date.now()
+          console.log(`処理時間: ${lastTime - firstTime}ms`)
         } else {
           console.log(`nova-frame[id="${NovaFrameId}"]が見つかりません`)
         }
